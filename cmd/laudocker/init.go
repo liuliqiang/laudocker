@@ -1,10 +1,8 @@
 package main
 
 import (
-	"os"
-	"syscall"
-
 	"github.com/liuliqiang/laudocker/cmd"
+	"github.com/liuliqiang/laudocker/internal/container"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -25,13 +23,9 @@ to quickly create a Cobra application.`,
 		if len(args) != 1 {
 			logrus.Fatalf("Invalid args count: %d", len(args))
 		}
+		logrus.Debugf("init cmd: %s", args[0])
 
-		defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
-		syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
-		argv := []string{args[0]}
-		if err := syscall.Exec(args[0], argv, os.Environ()); err != nil {
-			logrus.Error(err.Error())
-		}
+		container.RunContainerInitProcess(args[0], nil)
 	},
 }
 

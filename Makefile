@@ -9,16 +9,18 @@ repo=github.com/liuliqiang/${program}
 build_name=${program}-${full_version}.linux-amd64
 
 
+devel: build
+	mv build/bin/${program} ${cur_dir}/
+
 build: cmd/${program}/main.go
 	mkdir -p build/bin
 	go build -o build/bin/${program} ${repo}/cmd/${program}/
-
-devel: build
-	mv build/bin/${program} ${cur_dir}/
 
 clean:
 	rm -f laudocker
 	rm -f builf/bin/laudocker
 
+fix:
+	mount -t proc proc /proc
 
-.PHONY: build clean
+.PHONY: devel build clean fix
