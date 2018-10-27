@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package main
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/sirupsen/logrus"
+	"os"
 	"os/exec"
 	"syscall"
-	"os"
+
+	"github.com/liuliqiang/laudocker/cmd"
+
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 // runCmd represents the run command
@@ -44,29 +47,18 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(runCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// runCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// runCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cmd.RootCmd.AddCommand(runCmd)
 }
 
-
 func NewParentProcess(tty bool, command string) *exec.Cmd {
-	args:= []string{"init", command}
+	args := []string{"init", command}
 	cmd := exec.Command("/proc/self/exe", args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags:syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS |
+		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS |
 			syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,
 	}
 
-	if tty  {
+	if tty {
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
