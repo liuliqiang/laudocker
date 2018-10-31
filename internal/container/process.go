@@ -5,14 +5,24 @@ import (
 	"os/exec"
 	"syscall"
 
+	"github.com/liuliqiang/laudocker/internal/g"
+
+	"github.com/liuliqiang/laudocker/internal"
+
 	"github.com/sirupsen/logrus"
 )
 
-func Run(tty bool, command string) {
+func Run(tty bool, command string, res *g.ResourceConfig) {
 	parent := NewParentProcess(tty, command)
 	if err := parent.Start(); err != nil {
 		logrus.Error(err)
 	}
+
+	cgroupManager := internal.NewCgroupManager("laudocker-cgroup")
+	defer cgroupManager.Destroy()
+	cgroupManager.Set(res)
+	cgroupManager.Apply(parent.Process.Pid)
+
 	parent.Wait()
 	os.Exit(-1)
 }

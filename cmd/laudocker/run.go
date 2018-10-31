@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 		}
 
 		logrus.Debugf("command: %s", args[0])
-		container.Run(enableTty, args[0])
+		container.Run(enableTty, args[0], nil)
 	},
 }
 

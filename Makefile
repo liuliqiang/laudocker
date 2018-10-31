@@ -8,19 +8,22 @@ program=laudocker
 repo=github.com/liuliqiang/${program}
 build_name=${program}-${full_version}.linux-amd64
 
-
 devel: build
 	mv build/bin/${program} ${cur_dir}/
 
 build: cmd/${program}/main.go
 	mkdir -p build/bin
-	go build -o build/bin/${program} ${repo}/cmd/${program}/
+	env GOOS=linux GOARCH=amd64 \
+		go build -o build/bin/${program} ${repo}/cmd/${program}/
 
 clean:
 	rm -f laudocker
 	rm -f builf/bin/laudocker
 
+upload: build
+	scp -P 2200 -i ${vagrant_key} build/bin/${program} vagrant@127.0.0.1:/vagrant/${program}
+
 fix:
 	mount -t proc proc /proc
 
-.PHONY: devel build clean fix
+.PHONY: devel build clean fix upload
