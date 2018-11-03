@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/liuliqiang/laudocker/cmd"
 	"github.com/liuliqiang/laudocker/internal/container"
+	"github.com/liuliqiang/laudocker/internal/g"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -29,7 +30,13 @@ to quickly create a Cobra application.`,
 		}
 
 		logrus.Debugf("command: %s", args[0])
-		container.Run(enableTty, args[0], nil)
+
+		res := g.ResourceConfig{
+			MemoryLimit: "100m",
+			CpuSet:      "",
+			CpuShare:    "",
+		}
+		container.Run(enableTty, args[0], &res)
 	},
 }
 

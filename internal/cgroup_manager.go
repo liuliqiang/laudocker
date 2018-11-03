@@ -7,12 +7,17 @@ import (
 	"path"
 	"strings"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/liuliqiang/laudocker/internal/g"
+	"github.com/liuliqiang/laudocker/internal/subsystems"
+
+	"github.com/sirupsen/logrus"
 )
 
-var SubsystemsIns = []g.SubSystem{}
+var SubsystemsIns = []g.SubSystem{
+	&subsystems.CpuSubsystem{},
+	&subsystems.CpusetSubsystem{},
+	&subsystems.MemorySubSystem{},
+}
 
 type CgroupManager struct {
 	Path     string
