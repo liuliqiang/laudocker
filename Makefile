@@ -14,16 +14,24 @@ devel: build
 build: cmd/${program}/main.go
 	mkdir -p build/bin
 	env GOOS=linux GOARCH=amd64 \
-		go build -o build/bin/${program} ${repo}/cmd/${program}/
+		go build -ldflags '-X main.Version=${full_version}' -o build/bin/${program} ${repo}/cmd/${program}/
+
+release: cmd/${program}/main.go
+	mkdir -p build/bin
+	env GOOS=linux GOARCH=amd64 \
+		go build -ldflags '-X main.Version=${version}' -o build/bin/${program} ${repo}/cmd/${program}/
 
 clean:
 	rm -f laudocker
-	rm -f builf/bin/laudocker
+	rm -f build/bin/laudocker
 
 upload: build
 	scp -P 2200 -i ${vagrant_key} build/bin/${program} vagrant@127.0.0.1:/vagrant/${program}
 
 fix:
 	mount -t proc proc /proc
+
+install: release
+	cp build/bin/${program} ${GOPATH}/bin/${program}
 
 .PHONY: devel build clean fix upload
